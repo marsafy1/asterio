@@ -36,22 +36,32 @@ function scanUrlWithVirusTotal(identifier, type) {
     console.log(url);
 
     var apiToken = "b045c6c62e5ed61df7ae5db9b6f655d405509cebb05f19dd77dd947a007fbeb6";
-
-    fetch(url, {
-        method: 'GET',
-        headers: {
-            'Authorization': `Bearer ${apiToken}`, // Adjust the header name if necessary
-            'Content-Type': 'application/json'
+    console.log("Chrome");
+    console.log(chrome.runtime);
+    chrome.runtime.sendMessage({ action: "fetchData", url: url }, (response) => {
+        if (response.data) {
+          console.log(`Scan results for ${url}:`, response.data);
+          alert(`Scan results for ${url}: ${JSON.stringify(response.data, null, 2)}`);
+        } else {
+          console.error('Error:', response.error);
         }
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log(`Scan results for ${url}:`, data);
-        alert(`Scan results for ${url}: ${JSON.stringify(data, null, 2)}`);
-    })
-    .catch(error => {
-        console.error('Error scanning URL with VirusTotal:', error);
-    });
+      });
+
+    // fetch(url, {
+    //     method: 'GET',
+    //     headers: {
+    //         'Authorization': `Bearer ${apiToken}`, // Adjust the header name if necessary
+    //         'Content-Type': 'application/json'
+    //     }
+    // })
+    // .then(response => response.json())
+    // .then(data => {
+    //     console.log(`Scan results for ${url}:`, data);
+    //     alert(`Scan results for ${url}: ${JSON.stringify(data, null, 2)}`);
+    // })
+    // .catch(error => {
+    //     console.error('Error scanning URL with VirusTotal:', error);
+    // });
 }
 
 const button = createDefaultButton();

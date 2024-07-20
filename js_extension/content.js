@@ -32,12 +32,6 @@ function scanUrlWithVirusTotal(identifier, type) {
     }
 
     var url = endpoints[type];
-
-    console.log(url);
-
-    var apiToken = "b045c6c62e5ed61df7ae5db9b6f655d405509cebb05f19dd77dd947a007fbeb6";
-    console.log("Chrome");
-    console.log(chrome.runtime);
     chrome.runtime.sendMessage({ action: "fetchData", url: url }, (response) => {
         if (response.data) {
           console.log(`Scan results for ${url}:`, response.data);
@@ -46,22 +40,6 @@ function scanUrlWithVirusTotal(identifier, type) {
           console.error('Error:', response.error);
         }
       });
-
-    // fetch(url, {
-    //     method: 'GET',
-    //     headers: {
-    //         'Authorization': `Bearer ${apiToken}`, // Adjust the header name if necessary
-    //         'Content-Type': 'application/json'
-    //     }
-    // })
-    // .then(response => response.json())
-    // .then(data => {
-    //     console.log(`Scan results for ${url}:`, data);
-    //     alert(`Scan results for ${url}: ${JSON.stringify(data, null, 2)}`);
-    // })
-    // .catch(error => {
-    //     console.error('Error scanning URL with VirusTotal:', error);
-    // });
 }
 
 const button = createDefaultButton();
@@ -96,10 +74,9 @@ document.body.appendChild(button);
     3. JS Code ( later )
 */
 
+// To extract the data we will check
 function extractArtifacts() {
     const htmlContent = document.documentElement.outerHTML;
-    // const headContent = document.getElementsByTagName('head')[0].innerHTML;
-    // const bodyContent = document.getElementsByTagName('body')[0].innerHTML;
     const emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
     const ipRegex4 = /\b(?:\d{1,3}\.){3}\d{1,3}\b/g;
     const dnsRegex = /\b(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,6}\b/g;

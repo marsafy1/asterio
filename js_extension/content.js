@@ -1,3 +1,24 @@
+// Create and style the button
+function createDefaultButton(){
+    const button = document.createElement('button');
+
+    button.textContent = 'Run Asterio!';
+    button.style.position = 'fixed';
+    button.style.bottom = '10px';
+    button.style.right = '10px';
+    button.style.zIndex = '1000';
+    button.style.padding = '10px';
+    button.style.backgroundColor = '#007bff';
+    button.style.color = '#fff';
+    button.style.border = 'none';
+    button.style.borderRadius = '5px';
+    button.style.cursor = 'pointer';
+
+    return button;
+}
+const button = createDefaultButton();
+document.body.appendChild(button);
+
 // We will collect the following artifacts
 /* 
     1. Emails
@@ -27,7 +48,7 @@
     3. JS Code ( later )
 */
 
-document.addEventListener('click', () => {
+function extractArtifacts() {
     const htmlContent = document.documentElement.outerHTML;
     // const headContent = document.getElementsByTagName('head')[0].innerHTML;
     // const bodyContent = document.getElementsByTagName('body')[0].innerHTML;
@@ -48,5 +69,10 @@ document.addEventListener('click', () => {
     console.log('IPs:', ips);
     console.log('DNS Names:', dnsNames);
     console.log('URLs:', urls);
-  });
+  };
   
+function run(){
+    extractArtifacts();
+}
+// Add click event listener to the button
+button.addEventListener('click', run);

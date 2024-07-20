@@ -1,3 +1,5 @@
+// Functions
+
 // Create and style the button
 function createDefaultButton(){
     const button = document.createElement('button');
@@ -16,6 +18,42 @@ function createDefaultButton(){
 
     return button;
 }
+
+// Fetch Requests
+function scanUrlWithVirusTotal(identifier, type) {
+    // IPs -> https://www.virustotal.com/api/v3/ip_addresses/{ip}
+    // Domains -> https://www.virustotal.com/api/v3/domains/{domain}
+    // URLs -> https://www.virustotal.com/api/v3/urls/{id}
+
+    var endpoints = {
+        "ip":`https://www.virustotal.com/api/v3/ip_addresses/${identifier}`,
+        "domain":`https://www.virustotal.com/api/v3/domains/${identifier}`,
+        "url":`https://www.virustotal.com/api/v3/urls/${identifier}`
+    }
+
+    var url = endpoints[type];
+
+    console.log(url);
+
+    var apiToken = "b045c6c62e5ed61df7ae5db9b6f655d405509cebb05f19dd77dd947a007fbeb6";
+
+    fetch(url, {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${apiToken}`, // Adjust the header name if necessary
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log(`Scan results for ${url}:`, data);
+        alert(`Scan results for ${url}: ${JSON.stringify(data, null, 2)}`);
+    })
+    .catch(error => {
+        console.error('Error scanning URL with VirusTotal:', error);
+    });
+}
+
 const button = createDefaultButton();
 document.body.appendChild(button);
 
@@ -69,8 +107,23 @@ function extractArtifacts() {
     console.log('IPs:', ips);
     console.log('DNS Names:', dnsNames);
     console.log('URLs:', urls);
+
+    // Scan IPs using VirusTotal API
+    ips.forEach(ip => {
+        scanUrlWithVirusTotal(ip, "ip");
+    });
+    
+    // Scan domains using VirusTotal API
+    dnsNames.forEach(dnsNames => {
+        scanUrlWithVirusTotal(dnsNames, "domain");
+    });
+
+    // Scan URLs using VirusTotal API
+    urls.forEach(url => {
+        scanUrlWithVirusTotal(url, "url");
+    });
   };
-  
+
 function run(){
     extractArtifacts();
 }

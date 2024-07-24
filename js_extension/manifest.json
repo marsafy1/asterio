@@ -4,8 +4,7 @@
     "version": "1.0",
     "description": "An example Chrome extension.",
     "permissions": [
-        "activeTab",
-        "https://www.virustotal.com/"
+        "activeTab"
       ],
     "background": {
         "service_worker": "background.js"

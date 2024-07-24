@@ -303,7 +303,7 @@ const modalCss = `
     padding-top: 60px;
   }
   .modal-content {
-    background: rgba(0,0,0,0.5);
+    background: rgba(255,255,255,1);
     margin: 5% auto;
     padding: 20px;
     border: 1px solid #888;

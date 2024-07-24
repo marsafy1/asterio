@@ -139,7 +139,7 @@ function scanWithVirusTotal(identifier, type) {
         const hashId = computeSHA256Hash(url);
         console.log(`Scan results for ${identifier} - ${url}:`, summary);
         const newResult = `<div class="artifact-result">
-                                <div>${identifier}</div>
+                                <div style="min-width: 10%;">${identifier}</div>
                                 <div id=${identifier} class="results-container">
                                 </div>
                             </div>`
@@ -256,14 +256,21 @@ const modalCss = `
     justify-content: center;
     align-items: center;
     flex-direction: row;
-    border: 1px solid red;
-    margin-right: 10px;
-    margin-left: 10px;
+    
     border-radius: 6px;
+    border: 1px solid red;
+
+    margin-right: 2.5px;
+    margin-left: 2.5px;
+    margin-bottom: 5px;
+
+    
     padding-top: 5px;
     padding-bottom: 5px;
     padding-left: 10px;
     padding-right: 10px;
+
+    
   }
   .results-container{
     display: flex;
@@ -271,11 +278,12 @@ const modalCss = `
   }
   .artifact-result{
     display: flex;
-    justify-content: space-between;
     align-items: center;
     width: 100%;
+    margin-bottom:10px;
   }
   #artifacts{
+    width:100%;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -295,13 +303,15 @@ const modalCss = `
     padding-top: 60px;
   }
   .modal-content {
-    background-color: #fefefe;
+    background: rgba(0,0,0,0.5);
     margin: 5% auto;
     padding: 20px;
     border: 1px solid #888;
     width: 80%;
     display: flex;
     flex-direction: column;
+
+    border-radious: 10px;
   }
   .close {
     color: #aaa;

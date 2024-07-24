@@ -1,4 +1,81 @@
 // Functions
+// hash
+async function computeSHA256Hash(input) {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(input);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const hashHex = hashArray.map(byte => byte.toString(16).padStart(2, '0')).join('');
+    return hashHex;
+  }
+// 
+function extractImportantInfoForDomain(data) {
+    const attributes = data.data.attributes;
+  
+    // Extract analysis stats
+    const analysisStats = attributes.last_analysis_stats;
+    const maliciousCount = analysisStats.malicious;
+    const suspiciousCount = analysisStats.suspicious;
+    const harmlessCount = analysisStats.harmless;
+  
+    // Extract reputation
+    const reputation = attributes.reputation;
+  
+    // Extract categories
+    const categories = attributes.categories;
+  
+    // Extract registrar
+    const registrar = attributes.registrar;
+  
+    // Prepare a summary
+    const summary = {
+      maliciousCount,
+      suspiciousCount,
+      harmlessCount,
+      reputation,
+    //   categories,
+    //   registrar
+    };
+  
+    return summary;
+  }
+
+function extractImportantInfoForIP(data) {
+    const attributes = data.data.attributes;
+
+    // Extract analysis stats
+    const analysisStats = attributes.last_analysis_stats;
+    const maliciousCount = analysisStats.malicious;
+    const suspiciousCount = analysisStats.suspicious;
+    const harmlessCount = analysisStats.harmless;
+
+    // Extract reputation
+    const reputation = attributes.reputation;
+
+    // Extract country and ASN
+    const country = attributes.country;
+    const asn = attributes.asn;
+
+    // Extract network information
+    const network = attributes.network;
+
+    // Extract AS owner (registrar information)
+    const asOwner = attributes.as_owner;
+
+    // Prepare a summary
+    const summary = {
+        maliciousCount,
+        suspiciousCount,
+        harmlessCount,
+        reputation,
+        country,
+        asn,
+        network,
+        asOwner
+    };
+
+    return summary;
+}
 
 // Create and style the button
 function createDefaultButton(){
@@ -21,7 +98,18 @@ function createDefaultButton(){
 }
 
 // Fetch Requests
-function scanUrlWithVirusTotal(identifier, type) {
+function scanUrlWithVirusTotal(url){
+    // only for URLs, because they are handled differently
+    const requestURL = "https://www.virustotal.com/api/v3/urls";
+    const body = {
+        url: url
+    }
+
+    chrome.runtime.sendMessage({ action: "fetchData", url: requestURL, method: 'POST', contentType: "multipart/form-data", body: body}, (response) => {
+        // TODO: complete...
+    });
+}
+function scanWithVirusTotal(identifier, type) {
     // IPs -> https://www.virustotal.com/api/v3/ip_addresses/{ip}
     // Domains -> https://www.virustotal.com/api/v3/domains/{domain}
     // URLs -> https://www.virustotal.com/api/v3/urls/{id}
@@ -33,23 +121,49 @@ function scanUrlWithVirusTotal(identifier, type) {
     }
 
     var url = endpoints[type];
-    chrome.runtime.sendMessage({ action: "fetchData", url: url }, (response) => {
-        if (response.data) {
-        //   console.log(`Scan results for ${url}:`, response.data);
-        //   alert(`Scan results for ${url}: ${JSON.stringify(response.data, null, 2)}`);
+    chrome.runtime.sendMessage({ action: "fetchData", url: url, method: 'GET' }, (response) => {
+        if (response.data.data) {
+          
+    
         // get the element that holds the results
         const artifactsResults = document.getElementById("artifacts");
-        console.log(artifactsResults);
+        
+        let summary = {};
+        if(type === "domain"){
+            summary = extractImportantInfoForDomain(response.data);
+        }
+        if(type === "ip"){
+            summary = extractImportantInfoForIP(response.data);
+        }
+
+        const hashId = computeSHA256Hash(url);
+        console.log(`Scan results for ${identifier} - ${url}:`, summary);
         const newResult = `<div class="artifact-result">
-                                <div>Artifact</div>
-                                <div>Result</div>
+                                <div style="min-width: 10%;">${identifier}</div>
+                                <div id=${identifier} class="results-container">
+                                </div>
                             </div>`
         artifactsResults.innerHTML += newResult;
+        const results = document.getElementById(identifier);
+        for (let key in summary) {
+            if (summary.hasOwnProperty(key)) { // to filter out properties from the prototype chain
+              console.log(`${key}: ${summary[key]}`);
+              results.innerHTML += `
+              <div class='result-card'>
+                <div>${key}</div>
+                <div>-${summary[key]}</div>
+              </div>
+              `;
+            }
+        }
+        
+
         } else {
-          console.error('Error:', response.error);
+          console.error('Error:', response.data.error.message);
         }
       });
 }
+
 
 const button = createDefaultButton();
 document.body.appendChild(button);
@@ -89,15 +203,15 @@ function extractArtifacts() {
     const emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
     const ipRegex4 = /\b(?:\d{1,3}\.){3}\d{1,3}\b/g;
     const dnsRegex = /\b(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,6}\b/g;
-    const sUrlRegex = /https?:\/\/[^\s/$.?#].[^\s]*/g;
-    const urlRegex = /http?:\/\/[^\s/$.?#].[^\s]*/g;
+    const urlRegex = /https?:\/\/[^\s"'>]+/g;
+
+
 
     // Extract artifacts using the regular expressions
     const emails = htmlContent.match(emailRegex) || [];
     const ips = htmlContent.match(ipRegex4) || [];
     const dnsNames = htmlContent.match(dnsRegex) || [];
     const urls = htmlContent.match(urlRegex) || [];
-    
     // Log the extracted artifacts to the console
     console.log('Emails:', emails);
     console.log('IPs:', ips);
@@ -106,17 +220,17 @@ function extractArtifacts() {
 
     // Scan IPs using VirusTotal API
     ips.forEach(ip => {
-        scanUrlWithVirusTotal(ip, "ip");
+        scanWithVirusTotal(ip, "ip");
     });
     
     // Scan domains using VirusTotal API
     dnsNames.forEach(dnsNames => {
-        scanUrlWithVirusTotal(dnsNames, "domain");
+        scanWithVirusTotal(dnsNames, "domain");
     });
 
     // Scan URLs using VirusTotal API
     urls.forEach(url => {
-        scanUrlWithVirusTotal(url, "url");
+        scanUrlWithVirusTotal(url);
     });
   };
 
@@ -137,13 +251,39 @@ const modalHtml = `
 `;
 
 const modalCss = `
+  .result-card{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    
+    border-radius: 6px;
+    border: 1px solid red;
+
+    margin-right: 2.5px;
+    margin-left: 2.5px;
+    margin-bottom: 5px;
+
+    
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+
+    
+  }
+  .results-container{
+    display: flex;
+    flex-wrap: wrap;
+  }
   .artifact-result{
     display: flex;
-    justify-content: space-between;
     align-items: center;
     width: 100%;
+    margin-bottom:10px;
   }
   #artifacts{
+    width:100%;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -163,13 +303,15 @@ const modalCss = `
     padding-top: 60px;
   }
   .modal-content {
-    background-color: #fefefe;
+    background: rgba(255,255,255,1);
     margin: 5% auto;
     padding: 20px;
     border: 1px solid #888;
     width: 80%;
     display: flex;
     flex-direction: column;
+
+    border-radious: 10px;
   }
   .close {
     color: #aaa;

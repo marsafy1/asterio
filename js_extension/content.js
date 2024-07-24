@@ -151,7 +151,7 @@ function scanWithVirusTotal(identifier, type) {
               results.innerHTML += `
               <div class='result-card'>
                 <div>${key}</div>
-                <div>${summary[key]}</div>
+                <div>-${summary[key]}</div>
               </div>
               `;
             }
@@ -253,11 +253,21 @@ const modalHtml = `
 const modalCss = `
   .result-card{
     display: flex;
-    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
     border: 1px solid red;
+    margin-right: 10px;
+    margin-left: 10px;
+    border-radius: 6px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
   }
   .results-container{
     display: flex;
+    flex-wrap: wrap;
   }
   .artifact-result{
     display: flex;

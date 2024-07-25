@@ -216,6 +216,7 @@ function extractArtifacts() {
     });
   };
 
+// to start 
 function run(){
     extractArtifacts();
 }

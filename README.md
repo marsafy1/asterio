@@ -3,6 +3,12 @@
 [![GitHub](https://img.shields.io/badge/GitHub-Repository-blue.svg)](https://github.com/marsafy1/asterio)
 
 Asterio is a powerful security Chrome extension designed to enhance your browsing safety by analyzing URLs, domains, and IP addresses. Leveraging threat intelligence and the VirusTotal API, Asterio provides detailed information on the safety status of web entities, helping users identify and avoid malicious threats.
+## Examples
+### Customized Testing Page
+![testing](https://github.com/marsafy1/asterio/blob/master/examples/test%20page.png)
+
+### GeeksForGeeks
+![g4g](https://github.com/marsafy1/asterio/blob/master/examples/geeks4geeks.png)
 
 ## Features
 
@@ -16,3 +22,8 @@ Asterio is a powerful security Chrome extension designed to enhance your browsin
 - **JavaScript**: The core programming language used for extension development.
 - **Threat Intelligence**: Utilizes advanced threat intelligence techniques to detect malicious entities.
 - **VirusTotal API**: Integrates with VirusTotal to provide accurate and up-to-date threat data.
+
+## Todo
+- [ ] Automated analysis to abstract the summary into either malicious or non-malicious artifact.
+- [ ] Integration with other threat intelligence tools.
+- [ ] UI/UX enhancements.

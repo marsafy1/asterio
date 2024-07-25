@@ -139,9 +139,8 @@ function scanWithVirusTotal(identifier, type) {
         const hashId = computeSHA256Hash(url);
         console.log(`Scan results for ${identifier} - ${url}:`, summary);
         const newResult = `<div class="artifact-result">
-                                <div style="min-width: 10%;">${identifier}</div>
-                                <div id=${identifier} class="results-container">
-                                </div>
+                                <div style="min-width: 150px;">${identifier}</div>
+                                <div id=${identifier} class="results-container"></div>
                             </div>`
         artifactsResults.innerHTML += newResult;
         const results = document.getElementById(identifier);
@@ -150,8 +149,8 @@ function scanWithVirusTotal(identifier, type) {
               console.log(`${key}: ${summary[key]}`);
               results.innerHTML += `
               <div class='result-card'>
-                <div>${key}</div>
-                <div>-${summary[key]}</div>
+                <div class='result-card-key'>${key}</div>
+                <div class='result-card-value'>${summary[key]}</div>
               </div>
               `;
             }
@@ -242,8 +241,13 @@ function run(){
 const modalHtml = `
   <div id="myModal" class="modal">
     <div class="modal-content">
-      <div>
-        <span class="close">&times;</span>
+      <div class="modal-header">
+        <div class="modal-title">
+          Asterio
+        </div>
+        <div>
+          <span class="close">&times;</span>
+        </div>
       </div>
       <div id="artifacts"></div>
     </div>
@@ -251,27 +255,56 @@ const modalHtml = `
 `;
 
 const modalCss = `
+  .modal-title{
+    color: rgb(43, 96, 229);
+    font-weight: bolder;
+    font-size: 30px;
+  }
+  .modal-header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 20px;
+    padding-right: 20px;
+
+    background: rgba(19, 21, 31, 0.75);
+
+    border-radius: 10px;
+  }
+  .result-card-value{
+      background: rgb(43, 96, 229);
+      padding: 4px;
+      margin-left: 5px;
+
+
+      padding-top: 5px;
+      padding-bottom: 5px;
+      padding-right: 10px;
+  }
+  .result-card-key{
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 10px;
+  }
   .result-card{
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: row;
-    
-    border-radius: 6px;
-    border: 1px solid red;
-
+    border-radius: 10px;
+    /* border: 1px solid red; */
     margin-right: 2.5px;
     margin-left: 2.5px;
     margin-bottom: 5px;
+    background: rgba(19, 21, 31, 0.75);
+    border: 0.7px solid rgb(43, 96, 229);
 
-    
-    padding-top: 5px;
-    padding-bottom: 5px;
-    padding-left: 10px;
-    padding-right: 10px;
-
-    
+    overflow:hidden;
   }
+  
   .results-container{
     display: flex;
     flex-wrap: wrap;
@@ -279,6 +312,7 @@ const modalCss = `
   .artifact-result{
     display: flex;
     align-items: center;
+    justify-content: flex-start;
     width: 100%;
     margin-bottom:10px;
   }
@@ -288,6 +322,7 @@ const modalCss = `
     flex-direction: column;
     align-items: center;
     padding: 30px;
+    box-sizing: border-box;
   }
   .modal {
     display: none;
@@ -301,17 +336,21 @@ const modalCss = `
     background-color: rgb(0,0,0);
     background-color: rgba(0,0,0,0.4);
     padding-top: 60px;
+    font-family: Tahoma, sans-serif;
   }
   .modal-content {
-    background: rgba(255,255,255,1);
+    box-shadow: inset 0px -1px 1px var(--muidocs-palette-primaryDark-700);
+    background-color: hsla(210, 14%, 7%, 0.7);
     margin: 5% auto;
-    padding: 20px;
     border: 1px solid #888;
     width: 80%;
     display: flex;
     flex-direction: column;
 
-    border-radious: 10px;
+    border-radius: 10px;
+
+    color: white;
+    overflow: hidden;
   }
   .close {
     color: #aaa;
@@ -326,7 +365,8 @@ const modalCss = `
     cursor: pointer;
   }
 `;
-
+// padding: 20px;
+// background: rgba(16,18,20,1); for modal-content
 
 // Append the modal HTML and CSS to the document
 const styleElement = document.createElement('style');

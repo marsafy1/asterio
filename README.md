@@ -16,7 +16,3 @@ Asterio is a powerful security Chrome extension designed to enhance your browsin
 - **JavaScript**: The core programming language used for extension development.
 - **Threat Intelligence**: Utilizes advanced threat intelligence techniques to detect malicious entities.
 - **VirusTotal API**: Integrates with VirusTotal to provide accurate and up-to-date threat data.
-
-## License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.

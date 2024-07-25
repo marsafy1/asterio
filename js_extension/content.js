@@ -1,14 +1,35 @@
+// We will collect the following artifacts
+/* 
+    1. Emails
+    2. Domains
+    3. IPs
+    4. URLs
+*/
+
+// Steps
+/* 
+    1. Parse the HTML
+    2. Get the text content only
+    3. Check each string in the text collected
+*/
+
+// URLs & Domains & IPs
+/* 
+    1. <a href="url"></a> tag
+    2. plain text
+    3. JS Code ( later )
+*/
+
+// Emails
+/* 
+    1. sendTo
+    2. plain text
+    3. JS Code ( later )
+*/
+
+
 // Functions
-// hash
-async function computeSHA256Hash(input) {
-    const encoder = new TextEncoder();
-    const data = encoder.encode(input);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    const hashHex = hashArray.map(byte => byte.toString(16).padStart(2, '0')).join('');
-    return hashHex;
-  }
-// 
+// Get the summary of Domain Analysis
 function extractImportantInfoForDomain(data) {
     const attributes = data.data.attributes;
   
@@ -40,6 +61,7 @@ function extractImportantInfoForDomain(data) {
     return summary;
   }
 
+// Get the summary of IP Analysis
 function extractImportantInfoForIP(data) {
     const attributes = data.data.attributes;
 
@@ -97,7 +119,7 @@ function createDefaultButton(){
     return button;
 }
 
-// Fetch Requests
+// Scan URL... Handled differently than the other artifacts
 function scanUrlWithVirusTotal(url){
     // only for URLs, because they are handled differently
     const requestURL = "https://www.virustotal.com/api/v3/urls";
@@ -109,22 +131,20 @@ function scanUrlWithVirusTotal(url){
         // TODO: complete...
     });
 }
+
+// Scan IPs and Domains
 function scanWithVirusTotal(identifier, type) {
     // IPs -> https://www.virustotal.com/api/v3/ip_addresses/{ip}
     // Domains -> https://www.virustotal.com/api/v3/domains/{domain}
-    // URLs -> https://www.virustotal.com/api/v3/urls/{id}
 
     var endpoints = {
         "ip":`https://www.virustotal.com/api/v3/ip_addresses/${identifier}`,
-        "domain":`https://www.virustotal.com/api/v3/domains/${identifier}`,
-        "url":`https://www.virustotal.com/api/v3/urls/${identifier}`
+        "domain":`https://www.virustotal.com/api/v3/domains/${identifier}`
     }
 
     var url = endpoints[type];
     chrome.runtime.sendMessage({ action: "fetchData", url: url, method: 'GET' }, (response) => {
         if (response.data.data) {
-          
-    
         // get the element that holds the results
         const artifactsResults = document.getElementById("artifacts");
         
@@ -135,8 +155,6 @@ function scanWithVirusTotal(identifier, type) {
         if(type === "ip"){
             summary = extractImportantInfoForIP(response.data);
         }
-
-        const hashId = computeSHA256Hash(url);
 
         const newResult = `<div class="artifact-result">
                                 <div style="min-width: 150px;">${identifier}</div>
@@ -154,46 +172,11 @@ function scanWithVirusTotal(identifier, type) {
               `;
             }
         }
-        
-
         } else {
           console.error('Error:', response.data.error.message);
         }
       });
 }
-
-
-const button = createDefaultButton();
-document.body.appendChild(button);
-
-// We will collect the following artifacts
-/* 
-    1. Emails
-    2. Domains
-    3. IPs
-    4. URLs
-*/
-
-// Steps
-/* 
-    1. Parse the HTML
-    2. Get the text content only
-    3. Check each string in the text collected
-*/
-
-// URLs & Domains & IPs
-/* 
-    1. <a href="url"></a> tag
-    2. plain text
-    3. JS Code ( later )
-*/
-
-// Emails
-/* 
-    1. sendTo
-    2. plain text
-    3. JS Code ( later )
-*/
 
 // To extract the data we will check
 function extractArtifacts() {
@@ -237,7 +220,7 @@ function run(){
     extractArtifacts();
 }
 
-// content.js
+// HTML Content
 const modalHtml = `
   <div id="myModal" class="modal">
     <div class="modal-content">
@@ -365,8 +348,10 @@ const modalCss = `
     cursor: pointer;
   }
 `;
-// padding: 20px;
-// background: rgba(16,18,20,1); for modal-content
+
+// Create the button
+const button = createDefaultButton();
+document.body.appendChild(button);
 
 // Append the modal HTML and CSS to the document
 const styleElement = document.createElement('style');
@@ -398,6 +383,3 @@ window.onclick = function(event) {
     modal.style.display = "none";
   }
 }
-
-// Add click event listener to the button
-// button.addEventListener('click', run);

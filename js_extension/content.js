@@ -137,7 +137,7 @@ function scanWithVirusTotal(identifier, type) {
         }
 
         const hashId = computeSHA256Hash(url);
-        console.log(`Scan results for ${identifier} - ${url}:`, summary);
+
         const newResult = `<div class="artifact-result">
                                 <div style="min-width: 150px;">${identifier}</div>
                                 <div id=${identifier} class="results-container"></div>
@@ -146,7 +146,6 @@ function scanWithVirusTotal(identifier, type) {
         const results = document.getElementById(identifier);
         for (let key in summary) {
             if (summary.hasOwnProperty(key)) { // to filter out properties from the prototype chain
-              console.log(`${key}: ${summary[key]}`);
               results.innerHTML += `
               <div class='result-card'>
                 <div class='result-card-key'>${key}</div>
@@ -211,11 +210,12 @@ function extractArtifacts() {
     const ips = htmlContent.match(ipRegex4) || [];
     const dnsNames = htmlContent.match(dnsRegex) || [];
     const urls = htmlContent.match(urlRegex) || [];
+
     // Log the extracted artifacts to the console
-    console.log('Emails:', emails);
-    console.log('IPs:', ips);
-    console.log('DNS Names:', dnsNames);
-    console.log('URLs:', urls);
+    // console.log('Emails:', emails);
+    // console.log('IPs:', ips);
+    // console.log('DNS Names:', dnsNames);
+    // console.log('URLs:', urls);
 
     // Scan IPs using VirusTotal API
     ips.forEach(ip => {

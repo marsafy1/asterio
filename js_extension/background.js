@@ -1,6 +1,6 @@
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === "fetchData") {
-      const apiToken = 'b045c6c62e5ed61df7ae5db9b6f655d405509cebb05f19dd77dd947a007fbeb6';
+      const apiToken = 'YOUR_API_TOKEN';
       const url = request.url;
       const method = request.method;
       const body = request.body || null;
